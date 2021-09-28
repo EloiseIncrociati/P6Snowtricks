@@ -1,0 +1,7 @@
+.logo{
+    height: 60px;
+    width: auto;
+}
+.home-background{
+    background-image: url("/public/images/home.jpg");
+}
