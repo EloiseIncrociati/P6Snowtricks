@@ -1,7 +1,190 @@
-.logo{
+/*---------------------------------
+-------------HOMEPAGE--------------
+--------------------------------- */
+.logo {
     height: 60px;
     width: auto;
 }
-.home-background{
+
+.home-background {
     background-image: url("/public/images/home.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 20%;
+    height: auto;
+}
+
+.slogan {
+    height: 100vh;
+    text-align: left;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-transform: uppercase;
+    color: rgba(38, 37, 37, 0.93);
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.tricks-homepage {
+    display: block;
+    height: 98.75px;
+    margin-top: -98.75px;
+    visibility: hidden;
+}
+
+.footer-color {
+    color: rgba(38, 37, 37, 0.93);
+}
+
+/*---------------------------------
+-------------Tricks--------------
+--------------------------------- */
+.trick-data {
+    font-size: 0.8rem;
+}
+
+.list-inline-item:not(:first-child) {
+    margin-left: 0.5rem;
+}
+
+.no-medias {
+    border: 2px solid grey;
+}
+
+.no-medias > p {
+    color: grey;
+}
+
+div.carousel div.carousel-item > img {
+    width: 100%;
+    height: 18.75rem;
+}
+
+div.carousel div.carousel-item > iframe {
+    width: 100%;
+    height: 18.75rem;
+    border: 0;
+    display: block;
+}
+
+.carousel-indicators {
+    bottom: -50px;
+}
+
+.carousel-indicators li {
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    background-color: #ccc;
+}
+
+.carousel-inner {
+    margin-bottom: 50px;
+    border-radius: 0.625rem;
+    box-shadow: 0 2px 0 rgba(90, 97, 105, 0.11), 0 4px 8px rgba(90, 97, 105, 0.12), 0 10px 10px #5a61690f, 0 7px 70px rgba(90, 97, 105, 0.1);
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    top: 55px;
+    bottom: 55px;
+}
+
+ol {
+    margin: 0;
+}
+
+body > div.container.mt-5 > div > div > div.card.mt-5 {
+    margin-bottom: 30px;
+}
+
+/*---------------------------------
+-------------COMMENTS--------------
+--------------------------------- */
+
+.comments {
+    background: #fff;
+    border-radius: 0.625rem;
+    box-shadow: 0 2px 0 rgba(90, 97, 105, 0.11), 0 4px 8px rgba(90, 97, 105, 0.12), 0 10px 10px rgba(90, 97, 105, 0.06), 0 7px 70px rgba(90, 97, 105, 0.1);
+}
+
+.mb-30 {
+    margin-bottom: 30px;
+}
+
+.padDiv {
+    padding: 30px 35px;
+}
+
+.cmt {
+    background: #fff;
+    border-radius: 0.625rem;
+    box-shadow: 0 2px 0 rgba(90, 97, 105, 0.11), 0 4px 8px rgba(90, 97, 105, 0.12), 0 10px 10px rgba(90, 97, 105, 0.06), 0 7px 70px rgba(90, 97, 105, 0.1);
+}
+
+div.blog-comments__content > p {
+    font-weight: 600;
+}
+
+body > div.container.mt-5 > div > div > div.col-md-12.px-0 > div > p {
+    margin: 0;
+}
+
+#comment_content {
+    height: 8rem;
+}
+
+h6 {
+    font-weight: 500;
+}
+
+#comment-block > div {
+    padding-bottom: 20px;
+}
+
+.entry-comments-item {
+    margin-top: 40px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.entry-comments-body {
+    padding-left: 86px;
+}
+
+.entry-comments-author {
+    font-size: 16px;
+    color: #292929;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+}
+
+.comment-content {
+    margin-top: 25px;
+    margin-bottom: 0;
+    padding: 0;
+    font-size: 15px;
+    color: #999;
+    line-height: 28px;
+}
+
+.comment-date {
+    font-size: 13px;
+}
+
+.comments-anchor {
+    display: block;
+    height: 115px;
+    height: 98.75px;
+    margin-top: -98.75px;
+}
+
+.comment-anchor {
+    display: block;
+    height: 115px;
+    height: 98.75px;
+    margin-top: -98.75px;
 }

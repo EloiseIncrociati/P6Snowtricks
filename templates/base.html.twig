@@ -11,13 +11,14 @@
         <link href="https://fonts.googleapis.com/css?family=Shadows+Into+Light" rel="stylesheet">
 
 
-
         {% block stylesheets %}
             <!-- Main StyleSheet -->
-            <link rel="stylesheet" href="/../P6Snowtricks/public/css/main.css">
+            <link rel="stylesheet" href="{{ asset('css/main.css') }}">
 
             <!-- FontAwesome -->
-            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+                  integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+                  crossorigin="anonymous">
 
             <!--Material Icons -->
             <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -30,5 +31,8 @@
     <body>
         {% include 'navbar.html.twig' %}
         {% block body %}{% endblock %}
+        <footer class="container-fluid text-center footer-color">
+            <p>© COPYRIGHT Eloïse INCROCIATI</p>
+        </footer>
     </body>
 </html>
