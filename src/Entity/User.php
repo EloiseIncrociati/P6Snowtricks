@@ -48,6 +48,11 @@ class User
      */
     private $activate;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $role;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -121,6 +126,18 @@ class User
     public function setActivate(bool $activate): self
     {
         $this->activate = $activate;
+
+        return $this;
+    }
+
+    public function getRole(): ?string
+    {
+        return $this->role;
+    }
+
+    public function setRole(string $role): self
+    {
+        $this->role = $role;
 
         return $this;
     }
