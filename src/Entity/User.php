@@ -4,12 +4,16 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
+ * @UniqueEntity(fields={"username"}, message="There is already an account with this username")
  */
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @ORM\Id
@@ -49,9 +53,20 @@ class User
     private $activate;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="array")
      */
-    private $role;
+    private $roles;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isVerified = false;
+
+    public function __construct()
+    {
+        $this->created_at = new \DateTime();
+        $this->token = uniqid();
+    }
 
     public function getId(): ?int
     {
@@ -82,7 +97,10 @@ class User
         return $this;
     }
 
-    public function getPassword(): ?string
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -130,15 +148,70 @@ class User
         return $this;
     }
 
-    public function getRole(): ?string
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
     {
-        return $this->role;
+        $roles = $this->roles;
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
     }
 
-    public function setRole(string $role): self
+    public function setRoles(array $roles): self
     {
-        $this->role = $role;
+        $this->roles = $roles;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
+    public function __call($name, $arguments)
+    {
+        // TODO: Implement @method string getUserIdentifier()
+    }
+
+    /**
+     * The public representation of the user (e.g. a username, an email address, etc.)
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): self
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function getIsVerified(): ?bool
+    {
+        return $this->isVerified;
     }
 }

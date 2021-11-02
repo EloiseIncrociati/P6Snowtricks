@@ -46,21 +46,16 @@ class TrickFixtures extends Fixture implements DependentFixtureInterface
             ]]
         ];
 
-        $categories = $this->categoryRepository->findAll();
+        foreach ($tricksGroup as $trickGroup) {
+            foreach ($trickGroup['tricks'] as $t) {
+                $trick = new Trick();
+                $trick->setTitle($t['title']);
+                $trick->setContent($t['content']);
+                $trick->setCategory($this->getReference($trickGroup['category_label']));
+                $trick->setUser($this->getReference('Elrond'));
 
-        foreach ($categories as $category) {
-            foreach ($tricksGroup as $trickGroup) {
-                if ($trickGroup['category_label'] === $category->getLabel()) {
-                    foreach ($trickGroup['tricks'] as $t) {
-                        $trick = new Trick();
-                        $trick->setTitle($t['title']);
-                        $trick->setTitle(($t['title']));
-                        $trick->setContent($t['content']);
-                        $trick->setCategory($category);
+                $manager->persist($trick);
 
-                        $manager->persist($trick);
-                    }
-                }
             }
         }
 
@@ -70,6 +65,7 @@ class TrickFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
+            UserFixtures::class,
             CategoryFixtures::class
         ];
     }

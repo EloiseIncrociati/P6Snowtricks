@@ -5,23 +5,22 @@ namespace App\DataFixtures;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixtures extends Fixture
 {
-    /** @var UserPasswordEncoderInterface $encoder */
-    private $encoder;
+    private $passwordHasher;
 
-    public function __construct(UserPasswordEncoderInterface $encoder)
+    public function __construct(UserPasswordHasherInterface $passwordHasher)
     {
-        $this->encoder = $encoder;
+        $this->passwordHasher = $passwordHasher;
     }
 
     public function load(ObjectManager $manager)
     {
         $users = [
-            ['email' => 'admin@admin.fr', 'username' => 'Elrond', 'password' => 'admin', 'role' => 'ADMIN'],
-            ['email' => 'user@user.fr', 'username' => 'Arwenn', 'password' => 'user1', 'role' => 'USER'],
+            ['email' => 'admin@admin.fr', 'username' => 'Elrond', 'password' => 'admin', 'roles' => ['ROLE_ADMIN']],
+            ['email' => 'user@user.fr', 'username' => 'Arwenn', 'password' => 'user1', 'roles' => ['ROLE_USER']],
         ];
 
         foreach ($users as $u) {
@@ -29,11 +28,14 @@ class UserFixtures extends Fixture
             $user->setEmail($u['email']);
             $user->setUsername($u['username']);
             $user->setActivate(true);
-            $user->setRole($u['password']);
+            $user->setRoles($u['roles']);
 
-            $password = $this->encoder->encodePassword($user, $u['password']);
-            $user->setPassword($password);
+            $user->setPassword($this->passwordHasher->hashPassword(
+                $user,
+                'the_new_password'
+            ));
 
+            $this->addReference($u['username'], $user);
             $manager->persist($user);
         }
 

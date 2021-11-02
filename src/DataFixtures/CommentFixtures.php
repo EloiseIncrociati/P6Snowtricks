@@ -37,7 +37,6 @@ class CommentFixtures extends Fixture implements DependentFixtureInterface
 
                     $comment->setUser($user)
                         ->setTrick($trick)
-                        ->setCreatedAt(new \DateTime())
                         ->setContent('Merci pour le partage ! #' . $i);
 
                     $manager->persist($comment);

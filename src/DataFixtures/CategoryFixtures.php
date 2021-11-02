@@ -20,9 +20,10 @@ class CategoryFixtures extends Fixture
             ['label' => 'Old school'],
         ];
 
-        foreach ($categories as $category) {
+        foreach ($categories as $c) {
             $category = new Category();
-            $category->setLabel($category['label']);
+            $category->setLabel($c['label']);
+            $this->addReference($c['label'], $category);
 
             $manager->persist($category);
         }

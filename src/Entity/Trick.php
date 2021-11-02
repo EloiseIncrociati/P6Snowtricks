@@ -35,30 +35,28 @@ class Trick
     private $created_at;
 
     /**
-     * @ORM\Column(type="datetime_immutable")
+     * @ORM\Column(type="datetime")
      */
     private $updated_at;
 
     /**
-     * @ORM\OneToOne(targetEntity=Category::class, cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity=Category::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $category;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Media::class, mappedBy="trick")
-     */
-    private $media;
+
 
     /**
-     * @ORM\OneToOne(targetEntity=User::class, cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity=User::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
 
     public function __construct()
     {
-        $this->media = new ArrayCollection();
+        $this->created_at = new \DateTime();
+        $this->updated_at = new \DateTime();
     }
 
     public function getId(): ?int
@@ -102,12 +100,12 @@ class Trick
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updated_at;
     }
 
-    public function setUpdatedAt(\DateTimeImmutable $updated_at): self
+    public function setUpdatedAt(\DateTimeInterface $updated_at): self
     {
         $this->updated_at = $updated_at;
 
@@ -126,35 +124,6 @@ class Trick
         return $this;
     }
 
-    /**
-     * @return Collection|Media[]
-     */
-    public function getMedia(): Collection
-    {
-        return $this->media;
-    }
-
-    public function addMedium(Media $medium): self
-    {
-        if (!$this->media->contains($medium)) {
-            $this->media[] = $medium;
-            $medium->setTrick($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMedium(Media $medium): self
-    {
-        if ($this->media->removeElement($medium)) {
-            // set the owning side to null (unless already changed)
-            if ($medium->getTrick() === $this) {
-                $medium->setTrick(null);
-            }
-        }
-
-        return $this;
-    }
 
     public function getUser(): ?User
     {
@@ -163,7 +132,7 @@ class Trick
 
     public function setUser(User $user): self
     {
-        $this->user_id = $user;
+        $this->user = $user;
 
         return $this;
     }
