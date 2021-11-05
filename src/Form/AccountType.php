@@ -25,20 +25,6 @@ class AccountType extends AbstractType
             ->add('email', EmailType::class, array(
                 'label' => 'Email',
             ))
-            ->add('avatar', FileType::class, array(
-                'label' => 'Avatar',
-                'required' => false,
-                'data_class' => null,
-                'empty_data' => $user->getAvatar(),
-            ))
-            ->add('website', UrlType::class, array(
-                'label' => 'Website',
-                'required' => false,
-            ))
-            ->add('description', TextareaType::class, array(
-                'label' => 'Description',
-                'required' => false,
-            ))
         ;
     }
 

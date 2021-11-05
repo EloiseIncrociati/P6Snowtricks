@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProfileController extends AbstractController
 {
@@ -15,6 +16,6 @@ class ProfileController extends AbstractController
         $user = $this->getUser();
 
         // Call whatever methods you've added to your User class
-        return new Response('Well hi there '.$user->getFirstName());
+        return new Response('Well hi there '.$user->getUsername());
     }
 }

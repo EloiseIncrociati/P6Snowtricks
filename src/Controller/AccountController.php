@@ -53,18 +53,17 @@ class AccountController extends AbstractController
             $createdAt = new \DateTime();
             $confirmation_token = md5(random_bytes(60));
             $user->setPassword($password)
-                ->setAvatar('default-avatar.jpg')
                 ->setCreatedAt($createdAt)
-                ->setConfirmed(false)
-                ->setRole('ROLE_USER')
-                ->setConfirmationToken($confirmation_token);
+                ->setActivate(false)
+                ->setRoles('ROLE_USER')
+                ->setToken($confirmation_token);
             $manager->persist($user);
             $manager->flush();
             $subject = 'Confirmation de compte';
             $content = $this->renderView('emails/registration.html.twig', [
                 'username' => $user->getUsername(),
                 'id' => $user->getId(),
-                'token' => $user->getConfirmationToken(),
+                'token' => $user->getToken(),
                 'address' => $request->server->get('SERVER_NAME')
             ]);
             $headers = 'From: "Snowtricks"<eloise.incrociati@gmail.com>' . "\n";
@@ -72,7 +71,7 @@ class AccountController extends AbstractController
             $headers .= 'Content-Type: text/html; charset="iso-8859-1"' . "\n";
             $headers .= 'Content-Transfer-Encoding: 8bit';
             mail($user->getEmail(), $subject, $content, $headers);
-            $this->addFlash('success', 'Votre compte a bien été crée, un email vous a été envoyé pour le confirmer.');
+            $this->addFlash('success', 'Votre compte a bien été créé.');
             return $this->redirectToRoute('account_register');
         }
         return $this->render('account/register.html.twig', [
@@ -83,10 +82,10 @@ class AccountController extends AbstractController
     public function confirm(Request $request, UserRepository $repo, EntityManagerInterface $manager): ?Response
     {
         if (!$request->query->get('id')) {
-            throw new Exception('Veuillez cliquer sur le lien fournit dans l\'email qui vous a été envoyé pour vous valider !');
+            throw new Exception('Veuillez cliquer sur le lien dans l\'email qui vous a été envoyé !');
         }
         if (!$request->query->get('token')) {
-            throw new Exception('Veuillez cliquer sur le lien fournit dans l\'email qui vous a été envoyé pour vous valider !');
+            throw new Exception('Veuillez cliquer sur le lien dans l\'email qui vous a été envoyé !');
         }
 
         $id = $request->query->get('id');
@@ -94,15 +93,15 @@ class AccountController extends AbstractController
 
         /** @var User $user */
         $user = $repo->findOneBy(['id' => $id]);
-        if ($user->getId() && $user->getConfirmationToken() === $token) {
-            $user->setConfirmationToken(null)
-                ->setConfirmed(true);
+        if ($user->getId() && $user->getToken() === $token) {
+            $user->setToken(null)
+                ->setActivate(true);
             $manager->flush();
             $this->addFlash('success', 'Votre compte est validé ! Connectez-vous !');
             return $this->redirectToRoute('account_login');
         }
 
-        throw new Exception('Veuillez cliquer sur le lien fournit dans l\'email qui vous a été envoyé pour vous valider !');
+        throw new Exception('Veuillez cliquer sur le lien dans l\'email !');
     }
 
     public function profile(Request $request, EntityManagerInterface $manager)
@@ -110,28 +109,11 @@ class AccountController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $userDb = $manager->createQuery('SELECT u FROM App\Entity\User u WHERE u.id = :id')->setParameter('id', $user->getId())->getScalarResult();
-        $oldAvatar = $user->getAvatar();
-        $user->setAvatar(new File($this->getParameter('images_directory') . '/' . $user->getAvatar()));
         $form = $this->createForm(AccountType::class, $user, array('user' => $this->getUser()));
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $currentAvatar = $form->get('avatar')->getData();
-            if ($currentAvatar !== null && $currentAvatar !== $user->getAvatar()) {
-                $newAvatar = $form->get('avatar')->getData();
-                $avatarName = $this->generateUniqueFileName() . '.' . $newAvatar->guessExtension();
-                $newAvatar->move(
-                    $this->getParameter('images_directory'),
-                    $avatarName
-                );
-                $user->setAvatar($avatarName);
-                if ($oldAvatar !== 'default-avatar.jpg') {
-                    unlink($this->getParameter('images_directory') . '/' . $oldAvatar);
-                }
-            } else {
-                $user->setAvatar($oldAvatar);
-            }
 
             $manager->flush();
             $this->addFlash('success', 'Votre compte a été mis à jour.');
@@ -174,13 +156,13 @@ class AccountController extends AbstractController
                 /** @var User $user */
                 $user = $repo->findOneBy(['username' => $passwordForgot->getUsername()]);
                 $confirmation_token = md5(random_bytes(60));
-                $user->setConfirmationToken($confirmation_token);
+                $user->setToken($confirmation_token);
                 $manager->flush();
                 $subject = 'Réinitialisation du mot de passe';
                 $content = $this->renderView('emails/forgot-password.html.twig', [
                         'username' => $user->getUsername(),
                         'id' => $user->getId(),
-                        'token' => $user->getConfirmationToken(),
+                        'token' => $user->getToken(),
                         'address' => $request->server->get('SERVER_NAME'),
                     ]
                 );
@@ -204,10 +186,10 @@ class AccountController extends AbstractController
     public function resetPassword(Request $request, UserRepository $repo, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder)
     {
         if (!$request->query->get('id')) {
-            throw new Exception('Veuillez cliquer sur le lien fournit dans l\'email qui vous a été envoyé pour réinitialiser votre mot de passe !');
+            throw new Exception('Veuillez cliquer sur le lien qui vous a été envoyé pour réinitialiser votre mot de passe !');
         }
         if (!$request->query->get('token')) {
-            throw new Exception('Veuillez cliquer sur le lien fournit dans l\'email qui vous a été envoyé pour réinitialiser votre mot de passe !');
+            throw new Exception('Veuillez cliquer sur le lien qui vous a été envoyé pour réinitialiser votre mot de passe !');
         }
 
         $token = $request->query->get('token');
@@ -224,10 +206,10 @@ class AccountController extends AbstractController
 
             if ($user->getId()) {
                 if ($user->getEmail() === $passwordReset->getEmail()) {
-                    if ($user->getConfirmationToken() === $token) {
+                    if ($user->getToken() === $token) {
                         $newPassword = $passwordReset->getNewPassword();
                         $password = $encoder->encodePassword($user, $newPassword);
-                        $user->setConfirmationToken(null)
+                        $user->setToken(null)
                             ->setPassword($password);
                         $manager->persist($user);
                         $manager->flush();
@@ -235,14 +217,14 @@ class AccountController extends AbstractController
                         return $this->redirectToRoute('account_login');
                     }
 
-                    throw new Exception('Veuillez cliquer sur le lien fournit dans l\'email qui vous a été envoyé pour réinitialiser votre mot de passe !');
+                    throw new Exception('Veuillez cliquer sur le lien qui vous a été envoyé pour réinitialiser votre mot de passe !');
                 }
 
-                $this->addFlash('success', 'Cette adresse email n\'est pas celle associée à votre compte !');
+                $this->addFlash('success', 'Wrong email adress !');
                 return $this->redirectToRoute('account_login');
             }
 
-            throw new Exception('Veuillez cliquer sur le lien fournit dans l\'email qui vous a été envoyé pour réinitialiser votre mot de passe !');
+            throw new Exception('Veuillez cliquer sur le lien qui vous a été envoyé pour réinitialiser votre mot de passe !');
         }
 
         return $this->render('account/reset-password.html.twig', [

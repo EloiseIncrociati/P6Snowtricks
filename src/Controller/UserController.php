@@ -31,13 +31,11 @@ class UserController
     {
         $pagingInactive = $paging->setEntityClass(User::class)
             ->setCurrentPage($pageIn)
-            ->setLimit($this->getParameter('user_limit'))
             ->setCriteria(['confirmed' => 0]);
 
         $pagingActive = new Paging($manager);
         $pagingActive->setEntityClass(User::class)
             ->setCurrentPage($pageAc)
-            ->setLimit($this->getParameter('user_limit'))
             ->setCriteria(['confirmed' => 1]);
 
         return $this->render('user/admin-user.html.twig', [
@@ -65,13 +63,11 @@ class UserController
     {
         $paging->setEntityClass(Comment::class)
             ->setCurrentPage($page)
-            ->setLimit($this->getParameter('comment_user_limit'))
             ->setCriteria(['user' => $user->getId()]);
 
         $pagingTrick = new Paging($manager);
         $pagingTrick->setEntityClass(Trick::class)
             ->setCurrentPage($pageT)
-            ->setLimit($this->getParameter('trick_user_limit'))
             ->setCriteria(['user' => $user->getId()]);
 
         return $this->render('user/user-profile.html.twig', [
